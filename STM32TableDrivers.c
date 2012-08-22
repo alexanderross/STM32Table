@@ -104,32 +104,32 @@ void initialize(){
         primaryAll[14][3]=7UL;
         primaryAll[15][3]=0;
 
-?  ?  redRows[0] = 255UL;
-?  ?  redRows[1] = 245UL;
-?  ?  redRows[2] = 215UL;
-?  ?  redRows[3] = 1UL;
-?  ?  redRows[4] = 232UL;
-?  ?  redRows[5] = 12UL;
-?  ?  redRows[6] = 242UL;
-?  ?  redRows[7] = 112UL;
+		redRows[0] = 255UL;
+		redRows[1] = 245UL;
+		redRows[2] = 215UL;
+		redRows[3] = 1UL;
+		redRows[4] = 232UL;
+		redRows[5] = 12UL;
+		redRows[6] = 242UL;
+		redRows[7] = 112UL;
 
-?  ?  blueRows[0] = 163UL;
-?  ?  blueRows[1] = 124UL;
-?  ?  blueRows[2] = 25UL;
-?  ?  blueRows[3] = 1UL;
-?  ?  blueRows[4] = 26UL;
-?  ?  blueRows[5] = 35UL;
-?  ?  blueRows[6] = 66UL;
-?  ?  blueRows[7] = 255UL;
+		blueRows[0] = 163UL;
+		blueRows[1] = 124UL;
+		blueRows[2] = 25UL;
+		blueRows[3] = 1UL;
+		blueRows[4] = 26UL;
+		blueRows[5] = 35UL;
+		blueRows[6] = 66UL;
+		blueRows[7] = 255UL;
 
-?  ?  greenRows[0] = 125UL;
-?  ?  greenRows[1] = 135UL;
-?  ?  greenRows[2] = 145UL;
-?  ?  greenRows[3] = 1UL;
-?  ?  greenRows[4] = 255UL;
-?  ?  greenRows[5] = 255UL;
-?  ?  greenRows[6] = 255UL;
-?  ?  greenRows[7] = 255UL;
+		greenRows[0] = 125UL;
+		greenRows[1] = 135UL;
+		greenRows[2] = 145UL;
+		greenRows[3] = 1UL;
+		greenRows[4] = 255UL;
+		greenRows[5] = 255UL;
+		greenRows[6] = 255UL;
+		greenRows[7] = 255UL;
 
 }
 /*
@@ -193,7 +193,7 @@ void fillRegisters(){
 int i,t=0;
 int focus=1;
      for(i=0;i<8;i++){//Sweeping gnd channels 
-?  ?   t=0;
+		 t=0;
          for(t=0;t<8;t++){ // Sweeping RGB channels. For each sweep activation, also sweep the gnd while RGN is active
               GPIO_ResetBits(GPIOA,rgbClock|rgbLatch);//Clock Low
              if(redRows[i] & 1<<t){
@@ -236,198 +236,198 @@ void createRows(){
  */
 
 void renderPatternUnifiedTrigger(int clockRefreshRate = 10000){
-?  int gndCount=0,rgbCount=0;
-?  int clocks=0;
-?  GPIO_SetBits(GPIOA,rgbLatch | gndLatch ); // Hold open the latches for more duty cycle on the LEDS
+	int gndCount=0,rgbCount=0;
+	int clocks=0;
+	GPIO_SetBits(GPIOA,rgbLatch | gndLatch ); // Hold open the latches for more duty cycle on the LEDS
 
-?  //Ground sweep, which is different from an iteration, mind you.
-?  ?  ?  /* For each ground sweep, we must go through all 8 of the available voltage suppliers
-?  ?  ?   * for the R, G and B LED's. We will reference the current global row array, and if the
-?  ?  ?   * active bit is set, then we light the voltage rail for that row. The important thing is that
-?  ?  ?   * any particular forward voltage rail NEVER supplies over 40ma (lights 2 LED's at once). This is because
-?  ?  ?   * the max current for the 74HC shift register is 40ma, and noone wants to order another one of those.. :(
-?  ?  ?   */
-?  while(1){
-?  ?  clocks++;
+	//Ground sweep, which is different from an iteration, mind you.
+			/* For each ground sweep, we must go through all 8 of the available voltage suppliers
+			 * for the R, G and B LED's. We will reference the current global row array, and if the
+			 * active bit is set, then we light the voltage rail for that row. The important thing is that
+			 * any particular forward voltage rail NEVER supplies over 40ma (lights 2 LED's at once). This is because
+			 * the max current for the 74HC shift register is 40ma, and noone wants to order another one of those.. :(
+			 */
+	while(1){
+		clocks++;
 
-?  ?  if(clocks % clockRefreshRate == 0){
-?  ?  ?  clocks=0;
+		if(clocks % clockRefreshRate == 0){
+			clocks=0;
 
-?  ?  ?  GPIO_ResetBits(GPIOA,gndClock |gndSerial);//Here we go... If ground needs to be fired, it's already set.
+			GPIO_ResetBits(GPIOA,gndClock |gndSerial);//Here we go... If ground needs to be fired, it's already set.
 
-?  ?  ?  for(rgbCount=0;rgbCount<7;rgbCount++){
-?  ?  ?  ?  GPIO_ResetBits(GPIOA,rgbClock|redSerial|blueSerial|greenSerial);//Reset everything.
+			for(rgbCount=0;rgbCount<7;rgbCount++){
+				GPIO_ResetBits(GPIOA,rgbClock|redSerial|blueSerial|greenSerial);//Reset everything.
 
-?  ?  ?  ?  if(redRows[gndCount] & 1UL << rgbCount > 0){ // We shift our "mask" over the desired value, and if it's good, we set the bit!
-?  ?  ?  ?  ?  GPIO_SetBits(GPIOA,redSerial);
-?  ?  ?  ?  }
+				if(redRows[gndCount] & 1UL << rgbCount > 0){ // We shift our "mask" over the desired value, and if it's good, we set the bit!
+					GPIO_SetBits(GPIOA,redSerial);
+				}
 
-?  ?  ?  ?  if(greenRows[gndCount] & 1UL << rgbCount > 0){ // We shift our "mask" over the desired value, and if it's good, we set the bit!
-?  ?  ?  ?  ?  ?  ?  ?  GPIO_SetBits(GPIOA,greenSerial);
-?  ?  ?  ?  ?  ?  ?  }
+				if(greenRows[gndCount] & 1UL << rgbCount > 0){ // We shift our "mask" over the desired value, and if it's good, we set the bit!
+								GPIO_SetBits(GPIOA,greenSerial);
+							}
 
-?  ?  ?  ?  if(blueRows[gndCount] & 1UL << rgbCount > 0){ // We shift our "mask" over the desired value, and if it's good, we set the bit!
-?  ?  ?  ?  ?  ?  ?  ?  GPIO_SetBits(GPIOA,blueSerial);
-?  ?  ?  ?  }
+				if(blueRows[gndCount] & 1UL << rgbCount > 0){ // We shift our "mask" over the desired value, and if it's good, we set the bit!
+								GPIO_SetBits(GPIOA,blueSerial);
+				}
 
-?  ?  ?  ?  GPIO_SetBits(GPIOA,rgbClock);//Whatever we want lit is set, fire the clock to cycle them into their registers
-
-
-?  ?  ?  }
+				GPIO_SetBits(GPIOA,rgbClock);//Whatever we want lit is set, fire the clock to cycle them into their registers
 
 
+			}
 
-?  ?  ?  gndCount++;
-?  ?  ?  if(gndCount >=8){ // This is the last sweep, we must reset the ground count to set a new ground rail next cycle
-?  ?  ?  ?  gndCount=0;
-?  ?  ?  ?  GPIO_SetBits(GPIOA,gndSerial);//Set serial high, will activate rail next time around.
-?  ?  ?  }
-?  ?  ?  GPIO_SetBits(GPIOA,gndClock);// Post-set clock to unify cycle
-?  ?  }//IF for clock refresh rate
-?  }//While
+
+
+			gndCount++;
+			if(gndCount >=8){ // This is the last sweep, we must reset the ground count to set a new ground rail next cycle
+				gndCount=0;
+				GPIO_SetBits(GPIOA,gndSerial);//Set serial high, will activate rail next time around.
+			}
+			GPIO_SetBits(GPIOA,gndClock);// Post-set clock to unify cycle
+		}//IF for clock refresh rate
+	}//While
 }
 
 void renderPatternMixedTrigger(int clockRefreshRate = 10000){
-?  int gndCount=0,rgbCount=0;
-?  int clocks=0;
-?  GPIO_SetBits(GPIOA,rgbLatch | gndLatch ); // Hold open the latches for more duty cycle on the LEDS
+	int gndCount=0,rgbCount=0;
+	int clocks=0;
+	GPIO_SetBits(GPIOA,rgbLatch | gndLatch ); // Hold open the latches for more duty cycle on the LEDS
 
-?  //Ground sweep, which is different from an iteration, mind you.
-?  ?  ?  /* For each ground sweep, we must go through all 8 of the available voltage suppliers
-?  ?  ?   * for the R, G and B LED's. We will reference the current global row array, and if the
-?  ?  ?   * active bit is set, then we light the voltage rail for that row. The important thing is that
-?  ?  ?   * any particular forward voltage rail NEVER supplies over 40ma (lights 2 LED's at once). This is because
-?  ?  ?   * the max current for the 74HC shift register is 40ma, and noone wants to order another one of those.. :(
-?  ?  ?   */
-?  while(1){
-?  ?  clocks++;
+	//Ground sweep, which is different from an iteration, mind you.
+			/* For each ground sweep, we must go through all 8 of the available voltage suppliers
+			 * for the R, G and B LED's. We will reference the current global row array, and if the
+			 * active bit is set, then we light the voltage rail for that row. The important thing is that
+			 * any particular forward voltage rail NEVER supplies over 40ma (lights 2 LED's at once). This is because
+			 * the max current for the 74HC shift register is 40ma, and noone wants to order another one of those.. :(
+			 */
+	while(1){
+		clocks++;
 
-?  ?  if(clocks % clockRefreshRate == 0){
-?  ?  ?  clocks=0;
+		if(clocks % clockRefreshRate == 0){
+			clocks=0;
 
-?  ?  ?  GPIO_SetBits(GPIOA,gndClock);//Here we go... If ground needs to be fired, it's already set.
+			GPIO_SetBits(GPIOA,gndClock);//Here we go... If ground needs to be fired, it's already set.
 
-?  ?  ?  for(rgbCount=0;rgbCount<7;rgbCount++){
-?  ?  ?  ?  GPIO_ResetBits(GPIOA,rgbClock|redSerial|blueSerial|greenSerial);//Reset everything.
+			for(rgbCount=0;rgbCount<7;rgbCount++){
+				GPIO_ResetBits(GPIOA,rgbClock|redSerial|blueSerial|greenSerial);//Reset everything.
 
-?  ?  ?  ?  if(redRows[gndCount] & 1UL << rgbCount > 0){ // We shift our "mask" over the desired value, and if it's good, we set the bit!
-?  ?  ?  ?  ?  GPIO_SetBits(GPIOA,redSerial);
-?  ?  ?  ?  }
+				if(redRows[gndCount] & 1UL << rgbCount > 0){ // We shift our "mask" over the desired value, and if it's good, we set the bit!
+					GPIO_SetBits(GPIOA,redSerial);
+				}
 
-?  ?  ?  ?  if(greenRows[gndCount] & 1UL << rgbCount > 0){ // We shift our "mask" over the desired value, and if it's good, we set the bit!
-?  ?  ?  ?  ?  ?  ?  ?  GPIO_SetBits(GPIOA,greenSerial);
-?  ?  ?  ?  ?  ?  ?  }
+				if(greenRows[gndCount] & 1UL << rgbCount > 0){ // We shift our "mask" over the desired value, and if it's good, we set the bit!
+								GPIO_SetBits(GPIOA,greenSerial);
+							}
 
-?  ?  ?  ?  if(blueRows[gndCount] & 1UL << rgbCount > 0){ // We shift our "mask" over the desired value, and if it's good, we set the bit!
-?  ?  ?  ?  ?  ?  ?  ?  GPIO_SetBits(GPIOA,blueSerial);
-?  ?  ?  ?  }
+				if(blueRows[gndCount] & 1UL << rgbCount > 0){ // We shift our "mask" over the desired value, and if it's good, we set the bit!
+								GPIO_SetBits(GPIOA,blueSerial);
+				}
 
-?  ?  ?  ?  GPIO_SetBits(GPIOA,rgbClock);//Whatever we want lit is set, fire the clock to cycle them into their registers
-
-
-?  ?  ?  }
+				GPIO_SetBits(GPIOA,rgbClock);//Whatever we want lit is set, fire the clock to cycle them into their registers
 
 
-?  ?  ?  GPIO_ResetBits(GPIOA,gndClock | gndSerial); // Set clock low/serial low in anticipation of next GND clock
-?  ?  ?  gndCount++;
-?  ?  ?  if(gndCount >=8){ // This is the last sweep, we must reset the ground count to set a new ground rail next cycle
-?  ?  ?  ?  gndCount=0;
-?  ?  ?  ?  GPIO_SetBits(GPIOA,gndSerial);//Set serial high, will activate rail next time around.
-?  ?  ?  }
-?  ?  }//IF for clock refresh rate
-?  }//While
+			}
+
+
+			GPIO_ResetBits(GPIOA,gndClock | gndSerial); // Set clock low/serial low in anticipation of next GND clock
+			gndCount++;
+			if(gndCount >=8){ // This is the last sweep, we must reset the ground count to set a new ground rail next cycle
+				gndCount=0;
+				GPIO_SetBits(GPIOA,gndSerial);//Set serial high, will activate rail next time around.
+			}
+		}//IF for clock refresh rate
+	}//While
 }
 
 
  void rainPattern(int densitySeparator){
-  ?  ?  ?  // PRE-PROGRAMMED RAIN PATTERN
+  			// PRE-PROGRAMMED RAIN PATTERN
 
-?   GPIO_InitTypeDef GPIO_InitStructure;
-?   ?  //RCC_ClocksTypeDef RCC_ClockFreq;
+	 GPIO_InitTypeDef GPIO_InitStructure;
+	 	//RCC_ClocksTypeDef RCC_ClockFreq;
 
-?   ?  int clocks=0;
-?   ?  int ints=0;
-?   ?  int clup=0;
-?   ?  int fire=0;
-?   ?  int color=1;
-?   ?  int mode=1;
-?   ?    initialize();
-?   ?    //splitColors();
-?   ?   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	 	int clocks=0;
+	 	int ints=0;
+	 	int clup=0;
+	 	int fire=0;
+	 	int color=1;
+	 	int mode=1;
+	 	  initialize();
+	 	  //splitColors();
+	 	 RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
-?   ?  GPIO_InitStructure.GPIO_Pin = gndClock | blueSerial | greenSerial | redSerial | GPIO_Pin_4 | gndSerial | rgbLatch | rgbClock | gndLatch | GPIO_Pin_9;
-?   ?    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-?   ?    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-?   ?    GPIO_Init(GPIOA, &GPIO_InitStructure);
+	 	GPIO_InitStructure.GPIO_Pin = gndClock | blueSerial | greenSerial | redSerial | GPIO_Pin_4 | gndSerial | rgbLatch | rgbClock | gndLatch | GPIO_Pin_9;
+	 	  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	 	  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	 	  GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 
 
-?   ?     GPIO_ResetBits(GPIOA,GPIO_Pin_4);
-?   ?     GPIO_SetBits(GPIOA,gndLatch | GPIO_Pin_9);
-?   ?     while(1){
+	 	   GPIO_ResetBits(GPIOA,GPIO_Pin_4);
+	 	   GPIO_SetBits(GPIOA,gndLatch | GPIO_Pin_9);
+	 	   while(1){
 
-?  ?  ?  ?     clocks++;
-?  ?  ?  ?     if(clocks % 100000 == 0){
-?  ?  ?  ?     fire = rand() % (7+densitySeparator) + 1;
-?  ?  ?  ?     //-----------------------Clock strike
-?  ?  ?  ?     switch(fire){
-?  ?  ?  ?  ?  case 1:
-?  ?  ?  ?  ?  //fire=0;?  //Lock
-?  ?  ?  ?  ?   GPIO_SetBits(GPIOA,redSerial);
-?  ?  ?  ?  ?     break;
-?  ?  ?  ?  ?  case 2:
-?  ?  ?  ?  ?    GPIO_SetBits(GPIOA,greenSerial);
-?  ?  ?  ?  ?     break;
-?  ?  ?  ?  ?  case 3:
-?  ?  ?  ?  ?    GPIO_SetBits(GPIOA,blueSerial);
-?  ?  ?  ?  ?     break;
-?  ?  ?  ?  ?  case 4:
-?  ?  ?  ?  ?    GPIO_SetBits(GPIOA,greenSerial|blueSerial);
-?  ?  ?  ?  ?     break;
-?  ?  ?  ?  ?  case 5:
-?  ?  ?  ?  ?   GPIO_SetBits(GPIOA,greenSerial|redSerial);
-?  ?  ?  ?  ?     break;
-?  ?  ?  ?  ?  case 6:
-?  ?  ?  ?  ?    GPIO_SetBits(GPIOA,greenSerial|redSerial|blueSerial);
-?  ?  ?  ?  ?     break;
-?  ?  ?  ?  ?  case 7:
-?  ?  ?  ?  ?     GPIO_SetBits(GPIOA,blueSerial);
-?  ?  ?  ?  ?     break;
-?  ?  ?  ?  ?  case 8:
-?  ?  ?  ?  ?     GPIO_SetBits(GPIOA,blueSerial);
-?  ?  ?  ?  ?     break;
-?  ?  ?  ?  ?  default:
+				   clocks++;
+				   if(clocks % 100000 == 0){
+				   fire = rand() % (7+densitySeparator) + 1;
+				   //-----------------------Clock strike
+				   switch(fire){
+					case 1:
+					//fire=0;	//Lock
+					 GPIO_SetBits(GPIOA,redSerial);
+					   break;
+					case 2:
+					  GPIO_SetBits(GPIOA,greenSerial);
+					   break;
+					case 3:
+					  GPIO_SetBits(GPIOA,blueSerial);
+					   break;
+					case 4:
+					  GPIO_SetBits(GPIOA,greenSerial|blueSerial);
+					   break;
+					case 5:
+					 GPIO_SetBits(GPIOA,greenSerial|redSerial);
+					   break;
+					case 6:
+					  GPIO_SetBits(GPIOA,greenSerial|redSerial|blueSerial);
+					   break;
+					case 7:
+					   GPIO_SetBits(GPIOA,blueSerial);
+					   break;
+					case 8:
+					   GPIO_SetBits(GPIOA,blueSerial);
+					   break;
+					default:
 
-?  ?  ?  ?  ?     break;
-?  ?  ?  ?  ?  }
-?  ?  ?  ?  ?  fire++ ;
-?  ?  ?  ?  ?    if(clup==1){
-?  ?  ?  ?  ?    // Clock active strike
-?  ?  ?  ?  ?  ?  GPIO_SetBits(GPIOA,rgbLatch|rgbClock);
-?  ?  ?  ?  ?  ?  clup=0;
-?  ?  ?  ?  ?    }else{
-?  ?  ?  ?  ?  ?  clup=1;
-?  ?  ?  ?  ?  ?  GPIO_ResetBits(GPIOA,rgbLatch|rgbClock);
-?  ?  ?  ?  ?    }// Clock active strike
-?  ?  ?  ?  ?  GPIO_ResetBits(GPIOA,blueSerial | greenSerial | redSerial);
-?  ?  ?  ?  ?  //-----------------------Clock strike
-?  ?  ?  ?     }
+					   break;
+					}
+					fire++ ;
+					  if(clup==1){
+					  // Clock active strike
+						GPIO_SetBits(GPIOA,rgbLatch|rgbClock);
+						clup=0;
+					  }else{
+						clup=1;
+						GPIO_ResetBits(GPIOA,rgbLatch|rgbClock);
+					  }// Clock active strike
+					GPIO_ResetBits(GPIOA,blueSerial | greenSerial | redSerial);
+					//-----------------------Clock strike
+				   }
 
-?  ?  ?     if(clocks % 1000 == 0){
-?  ?  ?     //-----GNDCLOCK
-?  ?  ?  ?  ?  ints++;
-?  ?  ?  ?  ?  GPIO_SetBits(GPIOA,gndClock | gndLatch );
-?  ?  ?  ?  ?  if(ints == 7){
-?  ?  ?  ?  ?  ?    GPIO_SetBits(GPIOA,gndSerial);
-?  ?  ?  ?  ?  ?    ints=0;
-?  ?  ?  ?  ?  }else{
-?  ?  ?  ?  ?  ?  GPIO_ResetBits(GPIOA,gndSerial);
+			   if(clocks % 1000 == 0){
+			   //-----GNDCLOCK
+					ints++;
+					GPIO_SetBits(GPIOA,gndClock | gndLatch );
+					if(ints == 7){
+						  GPIO_SetBits(GPIOA,gndSerial);
+						  ints=0;
+					}else{
+						GPIO_ResetBits(GPIOA,gndSerial);
 
-?  ?  ?  ?  ?  }
-?  ?  ?  ?  ?  GPIO_ResetBits(GPIOA,gndClock| gndLatch);
-?  ?  ?     //-----GNDCLOCK
-?  ?  ?     }
-?  ?   }//WHILE
+					}
+					GPIO_ResetBits(GPIOA,gndClock| gndLatch);
+			   //-----GNDCLOCK
+			   }
+		 }//WHILE
  }
 
  /*
@@ -442,38 +442,38 @@ void renderPatternMixedTrigger(int clockRefreshRate = 10000){
   *
   */
  void readFile(){
-?   FILE*fp;
-?     long elapsed_seconds;
-?     char line[80];
+	 FILE*fp;
+	   long elapsed_seconds;
+	   char line[80];
 
-?        fp = fopen ( "PR1.C","r" ) ;
-?         if( fp == NULL )
-?           {
-?                 puts ( "cannot open file" ) ;
-?                 exit() ;
-?           }else{
-?          ?   while(fgets(line, 80, fp) != NULL)
-?          ?      {
-?          ?   ?   /* get a line, up to 80 chars from fr.  done if NULL */
-?          ?   ?   sscanf (line, "%ld", &elapsed_seconds);
-?          ?   ?   /* convert the string to a long int */
-?          ?   ?   printf ("%ld\n", elapsed_seconds);
-?          ?      }
-?           }
-?   fclose ( fp ) ;
+	      fp = fopen ( "PR1.C","r" ) ;
+	       if( fp == NULL )
+	         {
+	               puts ( "cannot open file" ) ;
+	               exit() ;
+	         }else{
+	        	 while(fgets(line, 80, fp) != NULL)
+	        	    {
+	        	 	 /* get a line, up to 80 chars from fr.  done if NULL */
+	        	 	 sscanf (line, "%ld", &elapsed_seconds);
+	        	 	 /* convert the string to a long int */
+	        	 	 printf ("%ld\n", elapsed_seconds);
+	        	    }
+	         }
+	 fclose ( fp ) ;
  }
 
 int main(void)
 {
-?   int mode=0;
+	 int mode=0;
 
 
-?   initialize();
-?  ?  if(mode == 1){//Pattern rendering
-?  ?  ?  createRows();
-?  ?      renderPatternUnifiedTrigger();
-?  ?  }else{//Standalone FX rain
-?  ?  ?  rainPattern();
-?  ?  }
+	 initialize();
+		if(mode == 1){//Pattern rendering
+			createRows();
+		    renderPatternUnifiedTrigger();
+		}else{//Standalone FX rain
+			rainPattern();
+		}
 
 }
